@@ -1,0 +1,366 @@
+@baseUrl = http://localhost:3000
+
+### 获取API信息
+GET {{baseUrl}}/
+
+### ========== 团购券码 API ==========
+
+### 获取券码列表
+GET {{baseUrl}}/api/coupons
+
+### 获取券码列表（带筛选）
+GET {{baseUrl}}/api/coupons?status=已核销&platform=美团&page=1&page_size=10
+
+### 创建券码
+POST {{baseUrl}}/api/coupons
+Content-Type: application/json
+
+{
+  "code": "MT-2024-TEST001",
+  "name": "美团成人票-测试用户",
+  "face_value": 120,
+  "purchase_price": 108,
+  "valid_from": "2024-01-01",
+  "valid_to": "2024-12-31",
+  "batch_no": "BATCH-MT-202401",
+  "platform": "美团",
+  "holder_name": "测试用户",
+  "holder_phone": "13800138000",
+  "operator": "系统管理员"
+}
+
+### 获取单个券码
+GET {{baseUrl}}/api/coupons/{{coupon_id}}
+
+### 更新券码
+PUT {{baseUrl}}/api/coupons/{{coupon_id}}
+Content-Type: application/json
+
+{
+  "name": "更新后的券码名称",
+  "remark": "测试更新",
+  "operator": "系统管理员"
+}
+
+### 获取券码状态流转
+GET {{baseUrl}}/api/coupons/{{coupon_id}}/transitions
+
+### 删除券码
+DELETE {{baseUrl}}/api/coupons/{{coupon_id}}?operator=系统管理员
+
+### ========== 核销记录 API ==========
+
+### 获取核销记录列表
+GET {{baseUrl}}/api/verifications
+
+### 获取核销记录列表（带筛选）
+GET {{baseUrl}}/api/verifications?status=正常&batch_no=BATCH-MT-202401&page=1&page_size=10
+
+### 创建核销记录
+POST {{baseUrl}}/api/verifications
+Content-Type: application/json
+
+{
+  "coupon_id": "{{coupon_id}}",
+  "coupon_code": "MT-2024-TEST001",
+  "gate_id": "{{gate_id}}",
+  "verification_time": "2024-05-25 10:00:00",
+  "verification_type": "闸机核销",
+  "operator": "闸机系统",
+  "device_no": "DEV-001",
+  "batch_no": "BATCH-MT-202401"
+}
+
+### 批量导入核销记录预检
+POST {{baseUrl}}/api/verifications/import/preview
+Content-Type: application/json
+
+{
+  "verifications": [
+    {
+      "coupon_code": "MT-2024-000001",
+      "verification_time": "2024-05-25 10:00:00",
+      "verification_type": "闸机核销",
+      "operator": "闸机系统",
+      "batch_no": "BATCH-MT-202401"
+    },
+    {
+      "coupon_code": "MT-2024-000002",
+      "verification_time": "2024-05-25 11:00:00",
+      "verification_type": "闸机核销",
+      "operator": "闸机系统",
+      "batch_no": "BATCH-MT-202401"
+    }
+  ]
+}
+
+### 批量导入核销记录
+POST {{baseUrl}}/api/verifications/import
+Content-Type: application/json
+
+{
+  "verifications": [
+    {
+      "coupon_code": "MT-2024-000001",
+      "verification_time": "2024-05-25 10:00:00",
+      "verification_type": "闸机核销",
+      "operator": "闸机系统",
+      "batch_no": "BATCH-MT-202401"
+    }
+  ],
+  "operator": "系统管理员"
+}
+
+### 券码重复核销异常判定
+POST {{baseUrl}}/api/verifications/check-duplicate
+Content-Type: application/json
+
+{
+  "coupon_code": "MT-2024-000001",
+  "batch_no": "BATCH-MT-202401"
+}
+
+### 分诊核销异常
+POST {{baseUrl}}/api/verifications/triage
+Content-Type: application/json
+
+{
+  "verification_id": "{{verification_id}}",
+  "operator": "系统管理员"
+}
+
+### ========== 入园闸机 API ==========
+
+### 获取闸机列表
+GET {{baseUrl}}/api/gates
+
+### 创建闸机
+POST {{baseUrl}}/api/gates
+Content-Type: application/json
+
+{
+  "gate_no": "GATE-TEST-001",
+  "name": "测试闸机",
+  "location": "测试入口",
+  "ip_address": "192.168.1.200",
+  "responsible_person": "测试负责人"
+}
+
+### 获取闸机快照
+GET {{baseUrl}}/api/gates/{{gate_id}}/snapshot
+
+### 归档闸机
+POST {{baseUrl}}/api/gates/{{gate_id}}/archive
+Content-Type: application/json
+
+{
+  "operator": "系统管理员"
+}
+
+### ========== 异常原因 API ==========
+
+### 获取异常原因列表
+GET {{baseUrl}}/api/exception-reasons
+
+### 创建异常原因
+POST {{baseUrl}}/api/exception-reasons
+Content-Type: application/json
+
+{
+  "code": "EXC-TEST-001",
+  "name": "测试异常原因",
+  "category": "测试分类",
+  "severity": "一般",
+  "description": "这是一个测试异常原因",
+  "solution": "测试解决方案"
+}
+
+### ========== 补录申请 API ==========
+
+### 获取补录申请列表
+GET {{baseUrl}}/api/supplementary
+
+### 创建补录申请
+POST {{baseUrl}}/api/supplementary
+Content-Type: application/json
+
+{
+  "verification_id": "{{verification_id}}",
+  "coupon_id": "{{coupon_id}}",
+  "applicant": "客服A",
+  "apply_time": "2024-05-25 10:00:00",
+  "reason": "闸机离线导致核销记录未同步",
+  "batch_no": "BATCH-MT-202401"
+}
+
+### 复核补录申请
+POST {{baseUrl}}/api/supplementary/{{supplementary_id}}/review
+Content-Type: application/json
+
+{
+  "status": "已确认",
+  "reviewer": "主管张伟",
+  "review_comment": "审核通过"
+}
+
+### 复核游客凭证
+POST {{baseUrl}}/api/supplementary/review
+Content-Type: application/json
+
+{
+  "supplementary_id": "{{supplementary_id}}",
+  "operator": "系统管理员"
+}
+
+### ========== 游客凭证 API ==========
+
+### 获取游客凭证列表
+GET {{baseUrl}}/api/visitor-vouchers
+
+### 创建游客凭证
+POST {{baseUrl}}/api/visitor-vouchers
+Content-Type: application/json
+
+{
+  "coupon_id": "{{coupon_id}}",
+  "voucher_type": "身份证照片",
+  "voucher_no": "VCH-TEST-001",
+  "upload_time": "2024-05-25 10:00:00",
+  "uploader": "客服A"
+}
+
+### 验证游客凭证
+POST {{baseUrl}}/api/visitor-vouchers/{{voucher_id}}/verify
+Content-Type: application/json
+
+{
+  "verify_status": "验证通过",
+  "verify_result": "凭证有效",
+  "verifier": "审核员甲"
+}
+
+### ========== 对账批次 API ==========
+
+### 获取对账批次列表
+GET {{baseUrl}}/api/reconciliation-batches
+
+### 创建对账批次
+POST {{baseUrl}}/api/reconciliation-batches
+Content-Type: application/json
+
+{
+  "batch_no": "BATCH-TEST-20240525",
+  "batch_date": "2024-05-25",
+  "platform": "美团",
+  "responsible_person": "财务A"
+}
+
+### 计算对账差异
+GET {{baseUrl}}/api/reconciliation-batches/{{batch_id}}/difference
+
+### 开始对账
+POST {{baseUrl}}/api/reconciliation-batches/{{batch_id}}/start
+Content-Type: application/json
+
+{
+  "operator": "系统管理员"
+}
+
+### 完成对账
+POST {{baseUrl}}/api/reconciliation-batches/{{batch_id}}/complete
+Content-Type: application/json
+
+{
+  "operator": "系统管理员"
+}
+
+### ========== 状态流转 API ==========
+
+### 获取状态流转历史
+GET {{baseUrl}}/api/status-flows?entity_type=coupon&entity_id={{coupon_id}}
+
+### 获取允许的状态流转
+GET {{baseUrl}}/api/status-flows/transitions?entity_type=coupon&current_status=未核销
+
+### ========== 规则配置 API ==========
+
+### 获取规则配置列表
+GET {{baseUrl}}/api/rule-configs
+
+### 创建规则配置
+POST {{baseUrl}}/api/rule-configs
+Content-Type: application/json
+
+{
+  "rule_code": "TEST_RULE_001",
+  "rule_name": "测试规则",
+  "rule_type": "测试类型",
+  "rule_value": "100",
+  "description": "这是一个测试规则",
+  "threshold": 100,
+  "unit": "次"
+}
+
+### ========== 异常事件 API ==========
+
+### 获取异常事件列表
+GET {{baseUrl}}/api/exception-events
+
+### 创建异常事件
+POST {{baseUrl}}/api/exception-events
+Content-Type: application/json
+
+{
+  "event_no": "EXC-EVT-TEST-001",
+  "event_type": "测试异常",
+  "severity": "一般",
+  "batch_no": "BATCH-MT-202401"
+}
+
+### 计算异常处理建议
+POST {{baseUrl}}/api/exception-events/suggestion
+Content-Type: application/json
+
+{
+  "coupon_id": "{{coupon_id}}",
+  "verification_id": "{{verification_id}}",
+  "gate_id": "{{gate_id}}",
+  "batch_no": "BATCH-MT-202401"
+}
+
+### 处理异常事件
+POST {{baseUrl}}/api/exception-events/{{event_id}}/handle
+Content-Type: application/json
+
+{
+  "handler": "主管张伟",
+  "handle_result": "已核实并处理"
+}
+
+### ========== 统计 API ==========
+
+### 获取核销成功率统计
+GET {{baseUrl}}/api/statistics/success-rate?start_date=2024-01-01&end_date=2024-12-31&group_by=day
+
+### 获取异常率统计
+GET {{baseUrl}}/api/statistics/exception-rate?start_date=2024-01-01&end_date=2024-12-31&group_by=day
+
+### 获取重复核销率统计
+GET {{baseUrl}}/api/statistics/duplicate-rate?start_date=2024-01-01&end_date=2024-12-31&group_by=day
+
+### 获取统计汇总
+GET {{baseUrl}}/api/statistics/summary?start_date=2024-01-01&end_date=2024-12-31
+
+### ========== 审计日志 API ==========
+
+### 获取审计日志列表
+GET {{baseUrl}}/api/audit-logs
+
+### 获取审计日志（带筛选）
+GET {{baseUrl}}/api/audit-logs?operator=系统管理员&entity_type=coupon&page=1&page_size=20
+
+### 获取实体审计日志
+GET {{baseUrl}}/api/audit-logs/entity/coupon/{{coupon_id}}
+
+### 获取操作人审计日志
+GET {{baseUrl}}/api/audit-logs/operator/系统管理员?limit=50

@@ -1,0 +1,34 @@
+景区门票团购核销异常分诊规则计算 API 服务
+Copyright (c) 2024
+
+本软件使用以下开源组件：
+
+1. Node.js
+   - 许可证: MIT License
+   - 网站: https://nodejs.org/
+
+2. Express
+   - 许可证: MIT License
+   - 网站: https://expressjs.com/
+
+3. TypeScript
+   - 许可证: Apache License 2.0
+   - 网站: https://www.typescriptlang.org/
+
+4. better-sqlite3
+   - 许可证: MIT License
+   - 网站: https://github.com/WiseLibs/better-sqlite3
+
+5. Zod
+   - 许可证: MIT License
+   - 网站: https://zod.dev/
+
+6. Jest
+   - 许可证: MIT License
+   - 网站: https://jestjs.io/
+
+7. uuid
+   - 许可证: MIT License
+   - 网站: https://github.com/uuidjs/uuid
+
+本项目为教学演示项目，仅供学习和参考使用。
